@@ -1,0 +1,11 @@
+{
+  "name": "opencli-site-perplexity",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenCLI site adapter for Perplexity.ai (ask, auth, new, status).",
+  "main": "index.js",
+  "peerDependencies": {
+    "@jackwener/opencli": "^1.8.0"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "opencode-plugin-perplexity",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "OpenCode plugin: Perplexity research tool via OpenCLI Browser Bridge",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "adapter",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "adapter:install": "bun scripts/install-adapter.ts"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "1.18.25",
+    "@opencode-ai/sdk": "1.18.25",
+    "zod": "4.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=20.18"
+  }
+}
