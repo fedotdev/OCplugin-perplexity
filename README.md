@@ -4,7 +4,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
 [![OpenCode Plugin](https://img.shields.io/badge/OpenCode-1.18.25-purple?style=flat-square)](https://opencode.ai)
 
-OpenCode plugin that registers a single tool — `perplexity_research` — to search Perplexity via your logged-in Chrome/Thorium profile and the **OpenCLI Browser Bridge**.
+OpenCode plugin that registers a single tool — perplexity_research — to search Perplexity via your logged-in Chrome/Thorium profile and the **OpenCLI Browser Bridge**.
+Perfect if you want to leverage Perplexity features without paying for a separate Perplexity API key. It uses your active browser session directly — whether you're on the free tier or have an active Pro subscription (recommended for advanced models and deeper research).
 
 > [!IMPORTANT]
 > This plugin is a thin wrapper around an external CLI process (`opencli perplexity ask`). It has **no network access of its own**. All browsing, authentication, and DOM extraction happen inside your real browser tab via OpenCLI's local daemon and the Browser Bridge MV3 extension.
