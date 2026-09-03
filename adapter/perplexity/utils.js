@@ -740,6 +740,23 @@ function pressedStateFn() {
   };
 }
 
+// Type a literal "/" into the focused composer so Perplexity opens its
+// slash/mode picker. Input.insertText (nativeType) is what actually types the
+// character and triggers the picker — CDP dispatchKeyEvent (nativeKeyPress)
+// sends a bare keydown that Lexical ignores, so it comes LAST, not first.
+async function trySendSlash(page) {
+  if (typeof page.nativeType === 'function') {
+    try { await page.nativeType('/'); return 'nativeType'; } catch {}
+  }
+  if (typeof page.nativeKeyPress === 'function') {
+    try { await page.nativeKeyPress('/'); return 'native'; } catch {}
+  }
+  if (typeof page.pressKey === 'function') {
+    try { await page.pressKey('/'); return 'press'; } catch {}
+  }
+  return 'none';
+}
+
 /**
  * Set the composer search mode.
  * @param {'search'|'deep_research'} mode
@@ -756,18 +773,34 @@ export async function setComposerMode(page, mode) {
   }
 
   if (mode === 'deep_research') {
-    // Discover a Deep Research control (label varies by locale).
-    const found = await page.evaluate(findByTextOrAriaFn(), 'deep\\s*research|глубок');
-    if (!found.found) {
+    // If Deep Research is already the active mode, don't toggle.
+    const active = await page.evaluate(pressedStateFn(), 'deep\\s*research|глубок');
+    if (active === 'on') return { mode: 'deep_research', ok: true };
+
+    // DOM-clicking the mode control is unreliable on this Perplexity build,
+    // so toggle through the slash keyboard command instead: focus the empty
+    // composer, send "/" (Perplexity opens the mode picker), then Enter
+    // confirms the selection. This is exactly what a human does, so it works
+    // in both directions (Search -> Deep Research, and back). typePrompt()
+    // clears the composer afterwards, so the "/" can't leak into the question.
+    const found = await findComposer(page);
+    if (!found) {
       throw new CommandExecutionError(
-        'MODE_UNAVAILABLE: Deep Research control not found. ' +
-        'This profile/account does not expose Deep Research (maybe Claude model or Pro tier). ' +
-        'Running in default search mode instead.',
+        'MODE_UNAVAILABLE: composer not found for slash-command mode switch',
       );
     }
-    await page.evaluate(clickByPatternFn(), 'deep\\s*research|глубок');
-    await page.wait({ time: 0.4 });
-    return { mode: 'deep_research', ok: true };
+    await page.evaluate(clickComposerFn(), found.selector);
+    const slashSent = await trySendSlash(page);
+    await page.wait({ time: 0.6 }); // let the mode picker open
+    if (typeof page.nativeKeyPress === 'function') {
+      await page.nativeKeyPress('Enter');
+    } else {
+      await page.pressKey('Enter');
+    }
+    await page.wait({ time: 0.5 });
+    // Drop any leftover "/" so it can't pollute the upcoming question.
+    await page.evaluate(clearComposerFn(), found.selector);
+    return { mode: 'deep_research', ok: true, via: slashSent ? 'slash-enter' : 'key-enter' };
   }
 
   throw new CommandExecutionError(`MODE_UNAVAILABLE: unknown mode "${mode}"`);

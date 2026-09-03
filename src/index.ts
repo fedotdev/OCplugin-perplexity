@@ -253,7 +253,7 @@ export const plugin: Plugin = async (input, options) => {
           maxWaitSeconds: tool.schema.number().gte(15).lte(240).int().default(130),
           requireSources: tool.schema.boolean().default(false),
           mode: tool.schema.enum(["search", "deep_research"]).default("search"),
-          incognito: tool.schema.boolean().default(false),
+          incognito: tool.schema.boolean().default(true),
         },
         async execute(args, ctx) {
           const hardTimeoutMs = args.maxWaitSeconds * 1000 + 10_000

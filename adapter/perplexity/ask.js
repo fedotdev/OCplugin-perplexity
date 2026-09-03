@@ -64,7 +64,7 @@ export default cli({
     { name: 'requireSources', type: 'boolean', required: false, default: false, help: 'Fail if no sources returned' },
     { name: 'new', type: 'boolean', required: false, default: false, help: 'Start a new thread (default: false)' },
     { name: 'mode', type: 'string', required: false, default: 'search', help: 'Composer mode: search or deep_research' },
-    { name: 'incognito', type: 'boolean', required: false, default: false, help: 'Enable Perplexity in-app incognito (if available)' },
+    { name: 'incognito', type: 'boolean', required: false, default: true, help: 'Enable Perplexity in-app incognito (default: on)' },
   ],
   func: async (page, kwargs) => {
     const traceId = randomUUID();
