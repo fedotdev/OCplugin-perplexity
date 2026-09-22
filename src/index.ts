@@ -391,6 +391,8 @@ export const plugin: Plugin = async (input, options) => {
               .join(" | ")
 
             const output =
+              "НЕДОВЕРЕННЫЕ ДАННЫЕ: ответ получен от Perplexity (поисковая выдача), " +
+              "факты проверяйте по первоисточникам.\n\n" +
               (parsed.answer_markdown ?? "(пустой ответ)") +
               "\n\n---\n**Источники (" + sources.length + "):**\n" +
               sourcesList +
